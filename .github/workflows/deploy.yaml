@@ -1,13 +1,15 @@
-
 name: deploy
-
 on: push
-
 jobs:
-  
   first-job:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Mostrar Variables
-      run: echo "La variable es ${{ secrets.TOKEN_GIT }}"
+      - name: Mostrar Variables
+        run: echo "El secreto es ${{ secrets.TOKEN_GIT }}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4  
+        with:
+          node-version: '18'
+      
