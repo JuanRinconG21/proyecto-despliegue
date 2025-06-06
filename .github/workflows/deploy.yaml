@@ -35,7 +35,10 @@ jobs:
       #Ejecutar los tests
       - name: Run tests
         run: npm run test
-
+      #Generar el build
+      - name: Build
+        run: npm run build
+  
   deploy:
     needs: build
     runs-on: ubuntu-latest
