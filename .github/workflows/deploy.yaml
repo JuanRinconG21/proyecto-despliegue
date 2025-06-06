@@ -1,23 +1,37 @@
-name: deploy
+name: Deploy en GitPages
 on: push
 jobs:
+  #Definir el job
   first-job:
     runs-on: ubuntu-latest
     #Para servicios usar DockerHub
-    services:
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
+    #services:
+      #redis:
+      #  image: redis
+      #  ports:
+      #    - 6379:6379
+    #Pasos que se van a ejecutar
     steps:
-      - name: Instalar Redis
-        run: sudo apt-get update -y && sudo apt-get install redis-tools -y
-      - name: Test Redis
-        run: redis-cli -h localhost -p 6379 ping
+      #Instalar Redis
+      #- name: Instalar Redis
+      #   run: sudo apt-get update -y && sudo apt-get install redis-tools -y
+      #Probar Redis
+      #- name: Test Redis
+      #  run: redis-cli -h localhost -p 6379 ping
+      #Mostrar variables o Secretos
       - name: Mostrar Variables
         run: echo "El secreto es ${{ secrets.TOKEN_GIT }}"
+      #Clonar el repositorio
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+      #Instalar Node sin necesidad de Docker todo se encuentra en Merkaplace
       - name: Setup Node
-        uses: actions/setup-node@v4  
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      
+          node-version: "18"
+      #Intalar dependencias
+      - name: Install dependencies
+        run: npm install
+      #Ejecutar los tests
+      - name: Run tests
+        run: npm run test
