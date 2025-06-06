@@ -3,7 +3,12 @@ on: push
 jobs:
   #Definir el job
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [16, 18, 20]
     #Para servicios usar DockerHub
     #services:
     #redis:
@@ -28,7 +33,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: ${{ matrix.node }}
       #Intalar dependencias
       - name: Install dependencies
         run: npm install
@@ -41,6 +46,7 @@ jobs:
       
       #Crear artefacto
       - name: Crear Artifact
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.node == '18' }}  
         uses: actions/upload-pages-artifact@v3
         with:
           path: public/
@@ -54,9 +60,23 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-      
+
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
+  
+  #CREAR CUENTA DE SLACK PARA PROBAR
+  # notify:
+  #   runs-on: ubuntu-latest
+  #   needs: deploy
+  #   if:  always()
+  #   steps:
+  #     - name: Notify Slack
+  #       uses: 8398a7/action-slack@v3
+  #       with:
+  #         status: ${{ job.status }}
+  #         fields: ${{ github.actor }}
+  #       env:
+  #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
